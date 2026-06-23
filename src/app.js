@@ -1,8 +1,10 @@
 const express=require("express");
 const app=express();
 const authRoutes=require("./routes/authRoutes");
+const routeRoutes = require("./routes/routeRoutes");
 
-
+app.use("/routes", routeRoutes);
+const deliveryRoutes = require("./routes/deliveryRoutes");
 
 const locationRoutes=require("./routes/locationRoutes");
 app.use(express.json());
@@ -29,5 +31,6 @@ app.get("/about",(req,res)=>{
 })
 app.use("/locations",locationRoutes);
 app.use("/auth",authRoutes);
+app.use("/deliveries", deliveryRoutes);
 module.exports=app;
 

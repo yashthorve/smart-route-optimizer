@@ -36,8 +36,9 @@ const generateOptimizedRoute = async (req, res) => {
             }
         }
 
+        const pythonServiceUrl = process.env.PYTHON_SERVICE_URL || "http://127.0.0.1:5000/optimize";
         const response = await axios.post(
-            "http://127.0.0.1:5000/optimize",
+            pythonServiceUrl,
             {
                 distanceMatrix: matrix
             }

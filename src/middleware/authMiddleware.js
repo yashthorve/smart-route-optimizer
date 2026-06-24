@@ -24,7 +24,7 @@ const decoded=jwt.verify(
 
 token,
 
-process.env.JWT_SECRET
+process.env.JWT_SECRET || 'fallback_secret_key_123'
 
 );
 

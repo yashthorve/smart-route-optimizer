@@ -1,0 +1,47 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--color-bg-main);
+  padding: 1rem;
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--color-primary-dark);
+}
+
+.button {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.linkText {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.link {
+  color: var(--color-primary-light);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

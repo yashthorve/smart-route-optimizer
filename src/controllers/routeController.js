@@ -36,7 +36,12 @@ const generateOptimizedRoute = async (req, res) => {
             }
         }
 
-        const pythonServiceUrl = process.env.PYTHON_SERVICE_URL || "http://127.0.0.1:5000/optimize";
+        let pythonServiceUrl = process.env.PYTHON_SERVICE_URL || "http://127.0.0.1:5000";
+        // Ensure the URL ends with /optimize
+        if (!pythonServiceUrl.endsWith('/optimize')) {
+            pythonServiceUrl = `${pythonServiceUrl.replace(/\/$/, '')}/optimize`;
+        }
+
         const response = await axios.post(
             pythonServiceUrl,
             {

@@ -6,7 +6,7 @@ import Button from '../../components/ui/Button/Button';
 import Input from '../../components/ui/Input/Input';
 import Modal from '../../components/ui/Modal/Modal';
 import Loader from '../../components/ui/Loader/Loader';
-import { Plus, Edit2, Trash2, Search } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 import styles from './Locations.module.css';
 
@@ -16,6 +16,7 @@ const Locations = () => {
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState(null);
+  const [isFetchingCoords, setIsFetchingCoords] = useState(false);
   
   const [formData, setFormData] = useState({ name: '', latitude: '', longitude: '' });
 
@@ -68,6 +69,39 @@ const Locations = () => {
       fetchLocations();
     } catch (error) {
       toast.error(error.response?.data?.error || 'Operation failed');
+    }
+  };
+
+  const handleFetchCoordinates = async () => {
+    if (!formData.name.trim()) {
+      toast.error('Please enter a location name first');
+      return;
+    }
+    
+    setIsFetchingCoords(true);
+    try {
+      // Nominatim requires a user-agent, but fetch in browser sends it automatically.
+      // We append format=json and limit=1 to get the top result
+      const query = encodeURIComponent(formData.name);
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&limit=1`);
+      
+      if (!res.ok) throw new Error('Geocoding service unavailable');
+      
+      const data = await res.json();
+      if (data && data.length > 0) {
+        setFormData({
+          ...formData,
+          latitude: parseFloat(data[0].lat).toFixed(6),
+          longitude: parseFloat(data[0].lon).toFixed(6)
+        });
+        toast.success('Coordinates found!');
+      } else {
+        toast.error('Could not find coordinates for this location');
+      }
+    } catch (error) {
+      toast.error('Error fetching coordinates');
+    } finally {
+      setIsFetchingCoords(false);
     }
   };
 
@@ -150,12 +184,25 @@ const Locations = () => {
         title={editingLocation ? 'Edit Location' : 'Add Location'}
       >
         <form onSubmit={handleSubmit} className={styles.form}>
-          <Input
-            label="Name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            required
-          />
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '1rem' }}>
+            <div style={{ flex: 1 }}>
+              <Input
+                label="Name (Address or City)"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
+            </div>
+            <Button 
+              type="button" 
+              onClick={handleFetchCoordinates}
+              disabled={isFetchingCoords || !formData.name}
+              style={{ marginBottom: '1rem' }}
+            >
+              <MapPin size={16} style={{ marginRight: '4px' }}/>
+              {isFetchingCoords ? 'Searching...' : 'Autofill Coords'}
+            </Button>
+          </div>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <Input
               label="Latitude"

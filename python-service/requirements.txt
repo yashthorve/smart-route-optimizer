@@ -1,2 +1,2 @@
-Flask==3.0.3
-ortools==9.10.4067
+Flask>=3.0.0
+ortools>=9.10.0
